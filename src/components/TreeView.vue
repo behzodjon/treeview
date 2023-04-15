@@ -10,6 +10,22 @@
             >{{ node.children ? (node.expanded ? "-" : "+") : "" }}</span
           >
           <input
+            v-if="node.editing"
+            type="text"
+            :value="node.label"
+            @input="editNodeLabel($event.target.value, node)"
+            @blur="toggleEditing(node)"
+            class="mr-2"
+          />
+          <label
+            v-else
+            :for="node.id"
+            class="cursor-pointer"
+            @dblclick="toggleEditing(node)"
+          >
+            {{ node.label }}
+          </label>
+          <input
             type="checkbox"
             :checked="node.checked"
             :indeterminate="hasIndeterminateState(node)"
@@ -17,7 +33,6 @@
             class="mr-2"
             @change="checkAllChildren(node)"
           />
-          <label :for="node.id" class="cursor-pointer">{{ node.label }}</label>
         </div>
         <ul v-if="node.expanded && node.children">
           <TreeView :nodes="node.children" :ref="node.id" />
@@ -29,18 +44,14 @@
 
 <script lang="ts">
 import { TreeNode, TreeViewProps } from "../interfaces/TreeViewInterfaces";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "TreeView",
   props: {
     nodes: {
       type: Array as () => TreeNode[],
       required: true,
-    },
-  },
-  computed: {
-    allChildrenChecked(): boolean {
-      return this.nodes.every((node) => node.checked);
     },
   },
 
@@ -68,8 +79,14 @@ export default {
 
       return checkedCount > 0 && uncheckedCount > 0;
     },
+    toggleEditing(node: TreeNode): void {
+      node.editing = !node.editing;
+    },
+    editNodeLabel(newLabel: string, node: TreeNode): void {
+      node.label = newLabel;
+    },
   },
-};
+});
 </script>
 
 <style scoped>
