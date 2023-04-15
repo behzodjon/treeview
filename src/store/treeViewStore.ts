@@ -25,5 +25,24 @@ export const useTreeStore = defineStore({
 
             this.nodes.push(newNode);
         },
+        editNodeLabel(newLabel: string, node: TreeNode): void {
+            const updatedNode = { ...node, label: newLabel };
+
+            const findNode = (id: string, nodes: TreeNode[]): TreeNode | null => {
+                for (const n of nodes) {
+                    if (n.id === id) {
+                        return n;
+                    } else if (n.children) {
+                        const foundNode = findNode(id, n.children);
+                        if (foundNode) return foundNode;
+                    }
+                }
+                return null;
+            };
+
+            const foundNode = findNode(node.id, this.nodes);
+            if (foundNode) Object.assign(foundNode, updatedNode);
+        }
+
     },
 });

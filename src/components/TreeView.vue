@@ -45,6 +45,7 @@
 <script lang="ts">
 import { TreeNode, TreeViewProps } from "../interfaces/TreeViewInterfaces";
 import { defineComponent } from "vue";
+import { useTreeStore } from "../store/treeViewStore";
 
 export default defineComponent({
   name: "TreeView",
@@ -53,6 +54,16 @@ export default defineComponent({
       type: Array as () => TreeNode[],
       required: true,
     },
+  },
+
+  setup() {
+    const store = useTreeStore();
+    const editNodeLabel = (newLabel, id) => {
+      store.editNodeLabel(newLabel, id);
+    };
+    return {
+      editNodeLabel,
+    };
   },
 
   methods: {
@@ -81,9 +92,6 @@ export default defineComponent({
     },
     toggleEditing(node: TreeNode): void {
       node.editing = !node.editing;
-    },
-    editNodeLabel(newLabel: string, node: TreeNode): void {
-      node.label = newLabel;
     },
   },
 });
