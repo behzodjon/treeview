@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { TreeNode } from '../interfaces/TreeViewInterfaces';
+import { TreeNode } from '../types/TreeNode';
 
 export const useTreeStore = defineStore({
     id: 'tree',
@@ -22,7 +22,7 @@ export const useTreeStore = defineStore({
                 editing: false,
                 children: [] as TreeNode[],
             };
-            parentNode.children.push(newNode);
+            parentNode.children?.push(newNode);
         },
         editNodeLabel(newLabel: string, node: TreeNode): void {
             const updatedNode = { ...node, label: newLabel };

@@ -1,6 +1,6 @@
 <template>
-  <div class="tree-view">
-    <ul>
+  <div>
+    <ul class="pl-4">
       <li v-for="node in nodes" :key="node.id" class="mb-2">
         <div class="flex items-center">
           <span class="cursor-pointer" @click="toggleExpand(node)">
@@ -12,7 +12,7 @@
               type="checkbox"
               :checked="node.checked"
               :indeterminate="hasIndeterminateState(node)"
-              :id="node.id"
+              :id="node.id.toString()"
               class="mr-1 w-5 h-5 text-[#e3165b] rounded-[2px] focus:ring-0 border-[2px] border-solid border-[#757575]"
               @change="checkAllChildren(node)"
             />
@@ -20,11 +20,11 @@
               v-if="node.editing"
               type="text"
               :value="node.label"
-              @input="editNodeLabel($event.target.value, node)"
+              @input="(event) => editNodeLabel((event.target as HTMLInputElement).value, node)"
               @blur="toggleEditing(node)"
               class="mr-2 p-[2px] h-[22px]"
             />
-            <span v-else :for="node.id" class="cursor-pointer ml-2">
+            <span v-else :for="node.id" class="ml-2 cursor-pointer">
               {{ node.label }}
             </span>
           </label>
@@ -38,75 +38,66 @@
           </div>
         </div>
         <ul v-if="node.expanded && node.children">
-          <TreeView :nodes="node.children" :ref="node.id" />
+          <TreeView :nodes="node.children" />
         </ul>
       </li>
     </ul>
   </div>
 </template>
 
-<script lang="ts">
-import { TreeNode, TreeViewProps } from "../interfaces/TreeViewInterfaces";
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { TreeNode } from "../types/TreeNode";
 import { useTreeStore } from "../store/treeViewStore";
-export default defineComponent({
-  name: "TreeView",
-  props: {
-    nodes: {
-      type: Array as () => TreeNode[],
-      required: true,
-    },
-  },
 
-  setup() {
-    const store = useTreeStore();
-    const editNodeLabel = (newLabel, id) => {
-      store.editNodeLabel(newLabel, id);
-    };
-    const addNodeToCurrentLevel = (node) => {
-      node.expanded = true;
-      store.addNodeToCurrentLevel(node);
-    };
-    return {
-      editNodeLabel,
-      addNodeToCurrentLevel,
-    };
-  },
-
-  methods: {
-    toggleExpand(node: TreeNode): void {
-      node.expanded = !node.expanded;
-    },
-    checkAllChildren(node: TreeNode): void {
-      node.checked = !node.checked;
-      if (node.children) {
-        node.children.forEach((child: TreeNode) => {
-          this.checkAllChildren(child);
-        });
-      }
-    },
-    hasIndeterminateState(node: TreeNode): boolean {
-      if (!node.children || node.children.length === 0) {
-        return false; // no children, default to unchecked
-      }
-
-      const checkedCount = node.children.filter(
-        (child) => child.checked
-      ).length;
-      const uncheckedCount = node.children.length - checkedCount;
-
-      return checkedCount > 0 && uncheckedCount > 0;
-    },
-    toggleEditing(node: TreeNode): void {
-      node.editing = !node.editing;
-    },
+defineProps({
+  nodes: {
+    type: Array as () => TreeNode[],
+    required: true,
   },
 });
+
+const emit = defineEmits(["add-node"]);
+
+const store = useTreeStore();
+
+const editNodeLabel = (newLabel: string, node: TreeNode) => {
+  store.editNodeLabel(newLabel, node);
+};
+
+const addNodeToCurrentLevel = (node: TreeNode) => {
+  node.expanded = true;
+  store.addNodeToCurrentLevel(node);
+};
+
+const toggleExpand = (node: TreeNode) => {
+  node.expanded = !node.expanded;
+};
+
+const checkAllChildren = (node: TreeNode) => {
+  node.checked = !node.checked;
+  if (node.children) {
+    node.children.forEach((child: TreeNode) => {
+      checkAllChildren(child);
+    });
+  }
+
+  emit("add-node", node);
+};
+
+const hasIndeterminateState = (node: TreeNode) => {
+  if (!node.children || node.children.length === 0) {
+    return false; // no children, default to unchecked
+  }
+
+  const checkedCount = node.children.filter((child) => child.checked).length;
+  const uncheckedCount = node.children.length - checkedCount;
+
+  return checkedCount > 0 && uncheckedCount > 0;
+};
+
+const toggleEditing = (node: TreeNode) => {
+  node.editing = !node.editing;
+};
 </script>
 
-<style scoped>
-.tree-view ul {
-  list-style: none;
-  padding-left: 1rem;
-}
-</style>
+<style scoped></style>
