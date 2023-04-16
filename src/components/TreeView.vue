@@ -21,7 +21,7 @@
               :checked="node.checked"
               :indeterminate="hasIndeterminateState(node)"
               :id="node.id"
-              @change="checkAllChildren(node)"
+              @change="checkAll(node)"
             />
 
             <!-- Editable Label Input -->
@@ -99,11 +99,11 @@ const toggleExpand = (node: TreeNode) => {
   node.expanded = !node.expanded;
 };
 
-const checkAllChildren = (node: TreeNode) => {
+const checkAll = (node: TreeNode) => {
   node.checked = !node.checked;
   if (node.children) {
     node.children.forEach((child: TreeNode) => {
-      checkAllChildren(child);
+      checkAll(child);
     });
   }
 
