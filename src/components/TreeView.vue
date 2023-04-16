@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul class="pl-4">
-      <li v-for="node in nodes" :key="node.id" class="mb-2">
+      <li class="mb-2">
         <div class="flex items-center">
           <span class="cursor-pointer" @click="toggleExpand(node)">
             <i-mdi-chevron-down v-if="node.expanded" width="24" height="24" />
@@ -38,7 +38,13 @@
           </div>
         </div>
         <ul v-if="node.expanded && node.children">
-          <TreeView :nodes="node.children" />
+          <TreeView
+            v-for="nodeChild in node.children"
+            :key="node.id"
+            :node="nodeChild"
+            :parent="$parent"
+            v-bind="$attrs"
+          />
         </ul>
       </li>
     </ul>
@@ -48,11 +54,16 @@
 <script setup lang="ts">
 import { TreeNode } from "../types/TreeNode";
 import { useTreeStore } from "../store/treeViewStore";
+import { defineProps, ComponentPublicInstance } from "vue";
 
-defineProps({
-  nodes: {
-    type: Array as () => TreeNode[],
+const props = defineProps({
+  node: {
+    type: Object as () => TreeNode,
     required: true,
+  },
+  parent: {
+    type: Object as () => ComponentPublicInstance | null,
+    default: null,
   },
 });
 
@@ -81,7 +92,11 @@ const checkAllChildren = (node: TreeNode) => {
     });
   }
 
-  emit("add-node", node);
+  if (props.parent) {
+    props.parent.$emit("add-node", node);
+  } else {
+    emit("add-node", node);
+  }
 };
 
 const hasIndeterminateState = (node: TreeNode) => {

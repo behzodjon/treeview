@@ -7,10 +7,11 @@
         >
           Tree view component
         </h5>
-
-        <TreeView :nodes="nodes" @add-node="onAddNode" />
+        <div v-for="node in nodes" :key="node.id">
+          <TreeView :node="node" @add-node="onAddNode" />
+          <!-- <Test :child="node" @child-clicked="onAddNode" /> -->
+        </div>
       </div>
-      <!-- <Test /> -->
     </div>
   </div>
 </template>
