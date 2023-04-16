@@ -1,38 +1,41 @@
 <template>
-  <div class="tree-view bg-violet-400">
+  <div class="tree-view">
     <ul>
-      <li v-for="node in nodes" :key="node.id">
+      <li v-for="node in nodes" :key="node.id" class="mb-2">
         <div class="flex items-center">
-          <span
-            class="toggle-button mr-2"
-            :class="{ 'toggle-button--expanded': node.expanded }"
-            @click="toggleExpand(node)"
-            >{{ node.children ? (node.expanded ? "-" : "+") : "" }}</span
-          >
-          <input
-            v-if="node.editing"
-            type="text"
-            :value="node.label"
-            @input="editNodeLabel($event.target.value, node)"
-            @blur="toggleEditing(node)"
-            class="mr-2"
-          />
-          <label
-            v-else
-            :for="node.id"
-            class="cursor-pointer"
-            @dblclick="toggleEditing(node)"
-          >
-            {{ node.label }}
+          <span class="cursor-pointer" @click="toggleExpand(node)">
+            <i-mdi-chevron-down v-if="node.expanded" width="24" height="24" />
+            <i-mdi-chevron-right v-else width="24" height="24" />
+          </span>
+          <label class="inline-flex items-center">
+            <input
+              type="checkbox"
+              :checked="node.checked"
+              :indeterminate="hasIndeterminateState(node)"
+              :id="node.id"
+              class="mr-1 w-5 h-5 text-[#e3165b] rounded-[2px] focus:ring-0 border-[2px] border-solid border-[#757575]"
+              @change="checkAllChildren(node)"
+            />
+            <input
+              v-if="node.editing"
+              type="text"
+              :value="node.label"
+              @input="editNodeLabel($event.target.value, node)"
+              @blur="toggleEditing(node)"
+              class="mr-2 p-[2px] h-[22px]"
+            />
+            <span v-else :for="node.id" class="cursor-pointer ml-2">
+              {{ node.label }}
+            </span>
           </label>
-          <input
-            type="checkbox"
-            :checked="node.checked"
-            :indeterminate="hasIndeterminateState(node)"
-            :id="node.id"
-            class="mr-2"
-            @change="checkAllChildren(node)"
-          />
+          <div class="flex items-center">
+            <button @click="addNodeToCurrentLevel(node)">
+              <i-mdi-plus-box width="20" height="20" />
+            </button>
+            <button @click="toggleEditing(node)">
+              <i-mdi-pencil-box width="20" height="20" />
+            </button>
+          </div>
         </div>
         <ul v-if="node.expanded && node.children">
           <TreeView :nodes="node.children" :ref="node.id" />
@@ -46,7 +49,6 @@
 import { TreeNode, TreeViewProps } from "../interfaces/TreeViewInterfaces";
 import { defineComponent } from "vue";
 import { useTreeStore } from "../store/treeViewStore";
-
 export default defineComponent({
   name: "TreeView",
   props: {
@@ -61,8 +63,13 @@ export default defineComponent({
     const editNodeLabel = (newLabel, id) => {
       store.editNodeLabel(newLabel, id);
     };
+    const addNodeToCurrentLevel = (node) => {
+      node.expanded = true;
+      store.addNodeToCurrentLevel(node);
+    };
     return {
       editNodeLabel,
+      addNodeToCurrentLevel,
     };
   },
 
@@ -101,10 +108,5 @@ export default defineComponent({
 .tree-view ul {
   list-style: none;
   padding-left: 1rem;
-}
-
-.tree-view .toggle-button {
-  font-size: 1rem;
-  cursor: pointer;
 }
 </style>

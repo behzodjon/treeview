@@ -13,17 +13,16 @@ export const useTreeStore = defineStore({
             this.nodes = data;
         },
 
-        addNode(label: string) {
+        addNodeToCurrentLevel(parentNode: TreeNode) {
             const newNode = {
                 id: String(Date.now()),
-                label,
+                label: 'new node',
                 expanded: false,
                 checked: false,
                 editing: false,
                 children: [] as TreeNode[],
             };
-
-            this.nodes.push(newNode);
+            parentNode.children.push(newNode);
         },
         editNodeLabel(newLabel: string, node: TreeNode): void {
             const updatedNode = { ...node, label: newLabel };
