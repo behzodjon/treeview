@@ -68,7 +68,7 @@
 
 <script setup lang="ts">
 import { TreeNode } from "@/types/TreeNode";
-import { useTreeStore } from "@/store/treeViewStore";
+import { useTreeStore } from "@/stores/treeView";
 import { ComponentPublicInstance } from "vue";
 
 const props = defineProps({
@@ -87,7 +87,7 @@ const emit = defineEmits(["select-node"]);
 const store = useTreeStore();
 
 const editNodeLabel = (newLabel: string, node: TreeNode) => {
-  store.editNodeLabel(newLabel, node);
+  node.label = newLabel;
 };
 
 const addNodeToCurrentLevel = (node: TreeNode) => {
