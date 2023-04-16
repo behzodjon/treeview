@@ -13,7 +13,7 @@
               :checked="node.checked"
               :indeterminate="hasIndeterminateState(node)"
               :id="node.id.toString()"
-              class="mr-1 w-5 h-5 text-[#e3165b] rounded-[2px] focus:ring-0 border-[2px] border-solid border-[#757575]"
+              class="mr-1"
               @change="checkAllChildren(node)"
             />
             <input
