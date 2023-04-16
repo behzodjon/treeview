@@ -1,9 +1,9 @@
 <template>
   <div class="h-screen pt-10">
     <div class="container px-4">
-      <div class="block p-6 bg-white rounded-lg shadow-xl dark:bg-neutral-700">
+      <div class="block p-6 bg-white rounded-lg shadow-xl">
         <h5
-          class="mb-2 text-xl font-medium leading-tight text-center text-neutral-800 dark:text-neutral-50"
+          class="mb-2 text-xl font-medium leading-tight text-center text-neutral-800"
         >
           Tree view component
         </h5>

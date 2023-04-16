@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { TreeNode } from '../types/TreeNode';
+import { TreeNode } from '@/types/TreeNode';
 
 function createNewNode(): TreeNode {
     return {
@@ -19,7 +19,7 @@ export const useTreeStore = defineStore({
     }),
     actions: {
         async fetchNodes() {
-            const response = await fetch(new URL('../assets/data.json', import.meta.url));
+            const response = await fetch(new URL('@/assets/data.json', import.meta.url));
             const data = await response.json();
             this.nodes = data;
         },
@@ -31,7 +31,8 @@ export const useTreeStore = defineStore({
 
         addNode() {
             const newNode = createNewNode();
-            this.nodes.push(newNode);
-        },
+            this.nodes = [...this.nodes, newNode];
+        }
+
     },
 });

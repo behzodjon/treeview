@@ -107,11 +107,8 @@ const checkAllChildren = (node: TreeNode) => {
     });
   }
 
-  if (props.parent) {
-    props.parent.$emit("select-node", node);
-  } else {
-    emit("select-node", node);
-  }
+  const event = props.parent ? props.parent.$emit : emit;
+  event("select-node", node);
 };
 
 const hasIndeterminateState = (node: TreeNode) => {
