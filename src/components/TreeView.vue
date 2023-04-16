@@ -1,42 +1,57 @@
 <template>
   <div>
     <ul class="pl-4">
-      <li class="mb-2">
-        <div class="flex items-center">
-          <span class="cursor-pointer" @click="toggleExpand(node)">
-            <i-mdi-chevron-down v-if="node.expanded" width="24" height="24" />
-            <i-mdi-chevron-right v-else width="24" height="24" />
-          </span>
-          <label class="inline-flex items-center">
+      <li>
+        <div class="flex items-center mb-2 cursor-pointer group">
+          <!--  Expand/Collapse Icon Container -->
+          <div>
+            <span v-if="node.children?.length" @click="toggleExpand(node)">
+              <i-mdi-chevron-down v-if="node.expanded" width="24" height="24" />
+              <i-mdi-chevron-right v-else width="24" height="24" />
+            </span>
+          </div>
+
+          <!--  Checkbox and Label Container  -->
+          <div
+            class="inline-flex items-center gap-1"
+            :class="{ 'ml-6': !node.children?.length }"
+          >
             <input
               type="checkbox"
               :checked="node.checked"
               :indeterminate="hasIndeterminateState(node)"
-              :id="node.id.toString()"
-              class="mr-1"
+              :id="node.id"
               @change="checkAllChildren(node)"
             />
+
+            <!-- Editable Label Input -->
             <input
               v-if="node.editing"
               type="text"
               :value="node.label"
               @input="(event) => editNodeLabel((event.target as HTMLInputElement).value, node)"
-              @blur="toggleEditing(node)"
-              class="mr-2 p-[2px] h-[22px]"
+              @keydown.enter="toggleEditing(node)"
+              class="p-[2px] h-[22px]"
             />
-            <span v-else :for="node.id" class="ml-2 cursor-pointer">
+
+            <label v-else :for="node.id">
               {{ node.label }}
-            </span>
-          </label>
-          <div class="flex items-center">
+            </label>
+          </div>
+
+          <!--  Actions Container  -->
+          <div class="flex items-center opacity-0 group-hover:opacity-100">
             <button @click="addNodeToCurrentLevel(node)">
               <i-mdi-plus-box width="20" height="20" />
             </button>
+
             <button @click="toggleEditing(node)">
               <i-mdi-pencil-box width="20" height="20" />
             </button>
           </div>
         </div>
+
+        <!--  Child Nodes Container -->
         <ul v-if="node.expanded && node.children">
           <TreeView
             v-for="nodeChild in node.children"
@@ -52,9 +67,9 @@
 </template>
 
 <script setup lang="ts">
-import { TreeNode } from "../types/TreeNode";
-import { useTreeStore } from "../store/treeViewStore";
-import { defineProps, ComponentPublicInstance } from "vue";
+import { TreeNode } from "@/types/TreeNode";
+import { useTreeStore } from "@/store/treeViewStore";
+import { ComponentPublicInstance } from "vue";
 
 const props = defineProps({
   node: {
@@ -67,7 +82,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["add-node"]);
+const emit = defineEmits(["select-node"]);
 
 const store = useTreeStore();
 
@@ -93,15 +108,15 @@ const checkAllChildren = (node: TreeNode) => {
   }
 
   if (props.parent) {
-    props.parent.$emit("add-node", node);
+    props.parent.$emit("select-node", node);
   } else {
-    emit("add-node", node);
+    emit("select-node", node);
   }
 };
 
 const hasIndeterminateState = (node: TreeNode) => {
   if (!node.children || node.children.length === 0) {
-    return false; // no children, default to unchecked
+    return false;
   }
 
   const checkedCount = node.children.filter((child) => child.checked).length;

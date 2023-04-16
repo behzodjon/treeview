@@ -24,6 +24,19 @@ export const useTreeStore = defineStore({
             };
             parentNode.children?.push(newNode);
         },
+
+        addNode() {
+            const newNode = {
+                id: String(Date.now()),
+                label: 'new node',
+                expanded: false,
+                checked: false,
+                editing: false,
+                children: [] as TreeNode[],
+            };
+            this.nodes.push(newNode);
+        },
+
         editNodeLabel(newLabel: string, node: TreeNode): void {
             const updatedNode = { ...node, label: newLabel };
 

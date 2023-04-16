@@ -1,4 +1,3 @@
-// Define an interface for the tree node
 export interface TreeNode {
     id: string;
     label: string;
