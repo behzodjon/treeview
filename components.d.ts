@@ -16,6 +16,8 @@ declare module '@vue/runtime-core' {
     IMdiChevronRight: typeof import('~icons/mdi/chevron-right')['default']
     IMdiPencilBox: typeof import('~icons/mdi/pencil-box')['default']
     IMdiPlusBox: typeof import('~icons/mdi/plus-box')['default']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
     Test: typeof import('./src/components/Test.vue')['default']
     TreeView: typeof import('./src/components/TreeView.vue')['default']
   }

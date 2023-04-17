@@ -70,6 +70,7 @@
 import { TreeNode } from "@/types/TreeNode";
 import { useTreeStore } from "@/stores/treeView";
 import { ComponentPublicInstance } from "vue";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   node: {
@@ -85,6 +86,7 @@ const props = defineProps({
 const emit = defineEmits(["select-node"]);
 
 const store = useTreeStore();
+const router = useRouter();
 
 const editNodeLabel = (newLabel: string, node: TreeNode) => {
   node.label = newLabel;
@@ -93,6 +95,12 @@ const editNodeLabel = (newLabel: string, node: TreeNode) => {
 const addNodeToCurrentLevel = (node: TreeNode) => {
   node.expanded = true;
   store.addNodeToCurrentLevel(node);
+
+  const currentQuery = router.currentRoute.value.query;
+  const newNodeIds = currentQuery.items
+    ? currentQuery.items + "," + node.id
+    : node.id;
+  router.replace({ query: { items: newNodeIds } });
 };
 
 const toggleExpand = (node: TreeNode) => {

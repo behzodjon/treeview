@@ -12,7 +12,8 @@
   "dependencies": {
     "pinia": "^2.0.34",
     "unplugin-icons": "^0.16.1",
-    "vue": "^3.2.47"
+    "vue": "^3.2.47",
+    "vue-router": "4"
   },
   "devDependencies": {
     "@iconify/json": "^2.2.50",
