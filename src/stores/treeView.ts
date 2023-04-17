@@ -30,7 +30,7 @@ export const useTreeStore = defineStore({
         addNodeToCurrentLevel(parentNode: TreeNode) {
             const newNode = createNewNode();
             parentNode.children?.push(newNode);
-            this.addNodeToQuery(newNode.id);
+            this.addNodeToQuery(parentNode.id);
         },
 
         addNode() {
@@ -49,9 +49,24 @@ export const useTreeStore = defineStore({
             const currentQuery = this.router.currentRoute.value.query;
             if (currentQuery.items) {
                 const nodeIds = currentQuery.items.split(',');
-                const newNodes = nodeIds.map((id: string) => createNewNode());
-                this.nodes = [...this.nodes, ...newNodes];
+                this.findObjectsById(this.nodes, nodeIds);
             }
         },
+
+        findObjectsById(data: TreeNode[], idsToFind: []) {
+            const foundIds = [];
+            for (const obj of data) {
+                if (idsToFind.includes(obj.id)) {
+                    obj.children?.push(createNewNode());
+                    foundIds.push(obj.id);
+                }
+                if (obj.children && obj.children.length) {
+                    this.findObjectsById(obj.children, idsToFind);
+                }
+            }
+            console.log(foundIds)
+
+        }
+
     },
 });

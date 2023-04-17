@@ -34,9 +34,7 @@
               class="p-[2px] h-[22px]"
             />
 
-            <label v-else :for="node.id">
-              {{ node.label }}
-            </label>
+            <label v-else :for="node.id"> {{ node.label }}{{ node.id }} </label>
           </div>
 
           <!--  Actions Container  -->
