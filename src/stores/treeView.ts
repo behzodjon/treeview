@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import { TreeNode } from '@/types/TreeNode';
-import { useRouter } from 'vue-router';
 
 function createNewNode(): TreeNode {
     return {
@@ -20,7 +19,6 @@ export const useTreeStore = defineStore({
     }),
 
     actions: {
-        router: useRouter(),
 
         async fetchNodes() {
             const response = await fetch(new URL('@/assets/data.json', import.meta.url));
